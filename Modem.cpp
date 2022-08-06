@@ -219,7 +219,7 @@ void CModem::setSerialParams(const std::string& protocol, unsigned int address)
 	if (protocol == "i2c")
 		m_serial = new CI2CController(m_port, SERIAL_115200, address, true);
 	else
-		m_serial = new CSerialController(m_port, SERIAL_115200, true);
+		m_serial = new CSerialController(m_port, SERIAL_115200, false);
 }
 
 void CModem::setRFParams(unsigned int rxFrequency, int rxOffset, unsigned int txFrequency, int txOffset, int txDCOffset, int rxDCOffset, float rfLevel, unsigned int pocsagFrequency)
@@ -1460,6 +1460,7 @@ bool CModem::readVersion()
 		for (unsigned int count = 0U; count < MAX_RESPONSES; count++) {
 			CThread::sleep(10U);
 			RESP_TYPE_MMDVM resp = getResponse();
+            LogInfo("Serial response %d", resp);
 			if (resp == RTM_OK && m_buffer[2U] == MMDVM_GET_VERSION) {
 				if (::memcmp(m_buffer + 4U, "MMDVM ", 6U) == 0)
 					m_hwType = HWT_MMDVM;
