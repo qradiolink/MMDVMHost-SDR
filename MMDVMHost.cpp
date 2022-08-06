@@ -643,8 +643,10 @@ int CMMDVMHost::run()
 			m_remoteControl = NULL;
 		}
 	}
-
-	setMode(MODE_IDLE);
+    if(m_fixedMode)
+        setMode(MODE_DMR);
+    else
+        setMode(MODE_IDLE);
 
 	LogMessage("MMDVMHost-%s is running", VERSION);
 
@@ -1075,7 +1077,8 @@ int CMMDVMHost::run()
 
 		m_dmrTXTimer.clock(ms);
 		if (m_dmrTXTimer.isRunning() && m_dmrTXTimer.hasExpired()) {
-			m_modem->writeDMRStart(false);
+            if(!m_fixedMode)
+                m_modem->writeDMRStart(false);
 			m_dmrTXTimer.stop();
 		}
 
