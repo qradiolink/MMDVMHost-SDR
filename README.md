@@ -1,3 +1,20 @@
+Readme for SDR operation with mmdvm-sdr
+=======
+
+This is a fork for the purpose of testing SDR operation mode in conjunction
+with qradiolink/mmdvm-sdr and qradiolink/qradiolink.
+ This fork is behind the original code and lacks many bugfixes
+and features compared to Jonathan's original. However it has a few patches 
+maintained here for the purpose of testing SDR operation.
+The goal is to have this merged upstream if it turns out to be working ok.
+Besides the patch by Peter Rakesh to use a pseudo-tty for serial connections,
+it also contains a patch by myself to enable continuous transmission with
+idle bursts in DMR mode for testing purposes. See original README below
+for all other details. The licese for the code is the same as the original.
+
+Original README
+=======
+
 These are the source files for building the MMDVMHost, the program that
 interfaces to the MMDVM or DVMega on the one side, and a suitable network on
 the other. It supports D-Star, DMR, P25 Phase 1, NXDN, System Fusion,
