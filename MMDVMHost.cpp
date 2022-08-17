@@ -1470,7 +1470,7 @@ bool CMMDVMHost::createModem()
 
 	IModemPort* port = NULL;
 	if (protocol == "uart")
-		port = new CUARTController(uartPort, uartSpeed, true);
+		port = new CUARTController(uartPort, uartSpeed, false);
 	else if (protocol == "udp")
 		port = new CUDPController(modemAddress, modemPort, localAddress, localPort);
 #if defined(__linux__)
