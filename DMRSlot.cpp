@@ -497,8 +497,13 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 			data[0U] = TAG_DATA;
 			data[1U] = 0x00U;
 
-			if (m_duplex)
+			if (m_duplex) {
 				writeQueueRF(data);
+                if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x01) {
+                    writeQueueRF(data);
+                    writeQueueRF(data);
+                }
+            }
 
 			writeNetworkRF(data, DT_CSBK, gi ? FLCO_GROUP : FLCO_USER_USER, srcId, dstId);
 
