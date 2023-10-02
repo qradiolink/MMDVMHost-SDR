@@ -501,7 +501,10 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				writeQueueRF(data);
                 if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x01) {
                     writeQueueRF(data);
+                    data[0U] = 0xFC;
                     writeQueueRF(data);
+                    writeQueueRF(data);
+                    data[0U] = TAG_DATA;
                 }
             }
 
