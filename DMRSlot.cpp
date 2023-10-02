@@ -476,6 +476,14 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
                 csbk.setDstId(srcId);
                 csbk.setSrcId(dstId);
             }
+            if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x01) {
+                LogMessage("DMR Slot %u, received group call request from %u to TG %u", m_slotNo, srcId, dstId);
+				csbk.setCSBKO(0xB1);
+                csbk.setData1(0x00);
+                csbk.setCBF(0x18);
+                csbk.setDstId(dstId);
+                csbk.setSrcId(srcId);
+            }
 			
 			// Regenerate the CSBK data
 			csbk.get(data + 2U);
