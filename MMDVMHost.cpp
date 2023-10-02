@@ -754,7 +754,8 @@ int CMMDVMHost::run()
 		}
 	}
 
-	setMode(MODE_IDLE);
+	setMode(MODE_DMR);
+    m_modem->writeDMRStart(true);
 
 	LogMessage("MMDVMHost-%s is running", VERSION);
 
@@ -1277,7 +1278,7 @@ int CMMDVMHost::run()
 
 		m_dmrTXTimer.clock(ms);
 		if (m_dmrTXTimer.isRunning() && m_dmrTXTimer.hasExpired()) {
-			m_modem->writeDMRStart(false);
+			//m_modem->writeDMRStart(false);
 			m_dmrTXTimer.stop();
 		}
 

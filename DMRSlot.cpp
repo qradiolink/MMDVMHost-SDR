@@ -468,6 +468,15 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				}
 			}
 			
+			if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x0E) {
+                LogMessage("DMR Slot %u, received registration request from %u to TG %u", m_slotNo, srcId, dstId);
+				csbk.setCSBKO(0xA0);
+                csbk.setData1(0x00);
+                csbk.setCBF(0xC4);
+                csbk.setDstId(srcId);
+                csbk.setSrcId(dstId);
+            }
+			
 			// Regenerate the CSBK data
 			csbk.get(data + 2U);
 
