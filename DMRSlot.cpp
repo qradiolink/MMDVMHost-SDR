@@ -1618,10 +1618,12 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 			return;
 
 		// set the OVCM bit for the supported csbk
+        /*
 		if (m_ovcm == DMR_OVCM_RX_ON || m_ovcm == DMR_OVCM_ON)
 			csbk.setOVCM(true);
 		else if (m_ovcm == DMR_OVCM_FORCE_OFF)
 			csbk.setOVCM(false);
+        */
 
 		bool gi = csbk.getGI();
 		unsigned int srcId = csbk.getSrcId();
