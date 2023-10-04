@@ -119,7 +119,6 @@ bool CDMRCSBK::put(const unsigned char* bytes)
 		m_dstId = m_data[4U] << 16 | m_data[5U] << 8 | m_data[6U];
 		m_srcId = m_data[7U] << 16 | m_data[8U] << 8 | m_data[9U];
 		m_dataContent = false;
-        m_service_kind = m_data[3U] & 0xFU;
 		m_CBF   = 0U;
 		CUtils::dump(1U, "Call Alert CSBK", m_data, 12U);
 		break;
@@ -238,39 +237,3 @@ void CDMRCSBK::setCBF(unsigned char cbf)
 {
 	m_CBF = m_data[3U] = cbf;
 }
-
-unsigned int CDMRCSBK::getServiceKind() const
-{
-    return m_service_kind;
-}
-
-void CDMRCSBK::setCSBKO(unsigned char csbko)
-{
-    m_data[0] = csbko;
-}
-
-void CDMRCSBK::setData1(unsigned char data1)
-{
-    m_data[2U] = data1;
-}
-
-void CDMRCSBK::setDstId(unsigned int dstId)
-{
-    m_dstId = dstId;
-    m_data[4U] = m_dstId >> 16;
-    m_data[5U] = (m_dstId >> 8) & 0xFF ;
-    m_data[6U] = m_dstId & 0xFF;
-}
-
-void CDMRCSBK::setSrcId(unsigned int srcId)
-{
-    m_srcId = srcId;
-    m_data[7U] = m_srcId >> 16;
-    m_data[8U] = (m_srcId >> 8) & 0xFF ;
-    m_data[9U] = m_srcId & 0xFF;
-}
-
-
-
-
-

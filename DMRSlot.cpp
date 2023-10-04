@@ -468,23 +468,6 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				}
 			}
 			
-			if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x0E) {
-                LogMessage("DMR Slot %u, received registration request from %u to TG %u", m_slotNo, srcId, dstId);
-				csbk.setCSBKO(0xA0);
-                csbk.setData1(0x00);
-                csbk.setCBF(0xC4);
-                csbk.setDstId(srcId);
-                csbk.setSrcId(dstId);
-            }
-            if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x01) {
-                LogMessage("DMR Slot %u, received group call request from %u to TG %u", m_slotNo, srcId, dstId);
-				csbk.setCSBKO(0xB1);
-                csbk.setData1(0x00);
-                csbk.setCBF(0x18);
-                csbk.setDstId(dstId);
-                csbk.setSrcId(srcId);
-            }
-			
 			// Regenerate the CSBK data
 			csbk.get(data + 2U);
 
@@ -497,16 +480,8 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 			data[0U] = TAG_DATA;
 			data[1U] = 0x00U;
 
-			if (m_duplex) {
-				writeQueueRF(data);
-                if (csbko == CSBKO_CALL_ALERT && csbk.getServiceKind() == 0x01) {
-                    writeQueueRF(data);
-                    data[0U] = 0xFC;
-                    writeQueueRF(data);
-                    writeQueueRF(data);
-                    data[0U] = TAG_DATA;
-                }
-            }
+			//if (m_duplex)
+			//	writeQueueRF(data);
 
 			writeNetworkRF(data, DT_CSBK, gi ? FLCO_GROUP : FLCO_USER_USER, srcId, dstId);
 

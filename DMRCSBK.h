@@ -31,8 +31,7 @@ enum CSBKO {
 	CSBKO_RADIO_CHECK    = 0x24,
 	CSBKO_NACKRSP        = 0x26,
 	CSBKO_BSDWNACT       = 0x38,
-	CSBKO_PRECCSBK       = 0x3D,
-    CSBKO_ACKD           = 0x20
+	CSBKO_PRECCSBK       = 0x3D
 };
 
 class CDMRCSBK
@@ -47,7 +46,6 @@ public:
 
 	// Generic fields
 	CSBKO         getCSBKO() const;
-    void          setCSBKO(unsigned char);
 	unsigned char getFID() const;
 
 	// Set/Get the OVCM bit in the supported CSBKs
@@ -62,15 +60,11 @@ public:
 
 	unsigned int  getSrcId() const;
 	unsigned int  getDstId() const;
-    void          setSrcId(unsigned int srcId);
-    void          setDstId(unsigned int dstId);
-    unsigned int  getServiceKind() const;
 
 	bool          getDataContent() const;
 	unsigned char getCBF() const;
 
 	void          setCBF(unsigned char cbf);
-    void          setData1(unsigned char data1);
 
 private:
 	unsigned char* m_data;
@@ -83,7 +77,6 @@ private:
 	bool           m_dataContent;
 	unsigned char  m_CBF;
 	bool           m_OVCM;
-    unsigned int   m_service_kind;
 };
 
 #endif

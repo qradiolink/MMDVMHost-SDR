@@ -1004,11 +1004,6 @@ int CMMDVMHost::run()
 							m_modem->writeDMRStart(true);
 							m_dmrTXTimer.start();
 						}
-						if(data[0] == 0xFC)
-                        {
-                            data[0] = TAG_DATA;
-                            m_modem->writeDMRData2(data, len);
-                        }
 						m_modem->writeDMRData1(data, len);
 						dmrBeaconDurationTimer.stop();
 						m_modeTimer.start();
