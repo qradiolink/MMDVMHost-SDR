@@ -445,10 +445,12 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				return false;
 
 			// set the OVCM bit for the supported csbk
+            /* Avoid clobbering CSBK bits
 			if (m_ovcm == DMR_OVCM_TX_ON || m_ovcm == DMR_OVCM_ON)
 				csbk.setOVCM(true);
 			else if (m_ovcm == DMR_OVCM_FORCE_OFF)
 				csbk.setOVCM(false);
+            */
 
 			bool gi = csbk.getGI();
 			unsigned int srcId = csbk.getSrcId();
