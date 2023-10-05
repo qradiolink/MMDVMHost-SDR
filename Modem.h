@@ -23,6 +23,9 @@
 #include "RingBuffer.h"
 #include "Defines.h"
 #include "Timer.h"
+#include "DMRCSBK.h"
+#include "DMRSlotType.h"
+#include "Sync.h"
 
 #include <string>
 
@@ -125,6 +128,7 @@ public:
 	bool writeIPInfo(const std::string& address);
 
 	bool writeDMRStart(bool tx);
+    bool writeDMRAloha(unsigned int systemCode, bool registrationRequired);
     void setShortLC(unsigned int systemCode, bool isControlChannel, bool registrationRequired);
 	bool writeDMRShortLC(const unsigned char* lc);
 	bool writeDMRAbort(unsigned int slotNo);

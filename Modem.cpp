@@ -63,6 +63,7 @@ const unsigned char MMDVM_DMR_LOST1   = 0x19U;
 const unsigned char MMDVM_DMR_DATA2   = 0x1AU;
 const unsigned char MMDVM_DMR_LOST2   = 0x1BU;
 const unsigned char MMDVM_DMR_SHORTLC = 0x1CU;
+const unsigned char MMDVM_DMR_ALOHA   = 0x14U;
 const unsigned char MMDVM_DMR_START   = 0x1DU;
 const unsigned char MMDVM_DMR_ABORT   = 0x1EU;
 
@@ -2622,6 +2623,49 @@ bool CModem::writeDMRAbort(unsigned int slotNo)
 	// CUtils::dump(1U, "Written", buffer, 4U);
 
 	return m_port->write(buffer, 4U) == 4;
+}
+
+bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
+{
+	assert(m_port != NULL);
+	CDMRCSBK csbk;
+    unsigned char data[DMR_FRAME_LENGTH_BYTES + 2U];
+    
+    data[2U] = 0x99;
+    data[3U] = 0x00;
+    data[4U] = 0x0D; // To test
+    data[5U] = 0x00; // TODO
+    data[6U] = ((unsigned int)registrationRequired) << 4; // TODO
+    data[7U] = (systemCode >> 6) & 0xFF;
+    data[8U] = (systemCode << 2) & 0xFF;  // PAR hardcoded to 0
+    // MS Address
+    data[9U] = 0x00;
+    data[10U] = 0x00;
+    data[11U] = 0x00;
+
+    csbk.get(data + 2U);
+
+    CDMRSlotType slotType;
+    slotType.putData(data + 2U);
+    slotType.setColorCode(m_dmrColorCode);
+    slotType.getData(data + 2U);
+
+    // Convert the Data Sync to be from the BS or MS as needed
+    CSync::addDMRDataSync(data + 2U, m_duplex);
+
+	unsigned char buffer[DMR_FRAME_LENGTH_BYTES + 3U];
+
+	buffer[0U]  = MMDVM_FRAME_START;
+	buffer[1U]  = DMR_FRAME_LENGTH_BYTES + 3U;
+	buffer[2U]  = MMDVM_DMR_ALOHA;
+    for(unsigned int i=0; i<DMR_FRAME_LENGTH_BYTES; i++)
+    {
+        buffer[i + 3U]  = data[i+ 2U];
+    }
+
+	// CUtils::dump(1U, "Written", buffer, 12U);
+
+	return m_port->write(buffer, DMR_FRAME_LENGTH_BYTES + 3U) == 12;
 }
 
 void CModem::setShortLC(unsigned int systemCode, bool isControlChannel, bool registrationRequired)

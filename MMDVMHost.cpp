@@ -758,6 +758,7 @@ int CMMDVMHost::run()
 	if(m_conf.getControlChannel())
     {
         setMode(MODE_DMR);
+        m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
         m_modem->writeDMRStart(true);
     }
 
