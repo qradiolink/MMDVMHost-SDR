@@ -43,6 +43,7 @@ public:
 	bool put(const unsigned char* bytes);
 
 	void get(unsigned char* bytes) const;
+    void setCSBKData(unsigned char* bytes);
 
 	// Generic fields
 	CSBKO         getCSBKO() const;

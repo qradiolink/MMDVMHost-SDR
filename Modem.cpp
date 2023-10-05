@@ -2642,12 +2642,12 @@ bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
     data[9U] = 0x00;
     data[10U] = 0x00;
     data[11U] = 0x00;
-
+    csbk.setCSBKData(data);
     csbk.get(data + 2U);
 
     CDMRSlotType slotType;
-    slotType.putData(data + 2U);
     slotType.setColorCode(m_dmrColorCode);
+    slotType.setDataType(DT_CSBK);
     slotType.getData(data + 2U);
 
     // Convert the Data Sync to be from the BS or MS as needed
