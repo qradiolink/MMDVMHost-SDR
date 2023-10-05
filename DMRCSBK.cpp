@@ -47,7 +47,10 @@ CDMRCSBK::~CDMRCSBK()
 
 void CDMRCSBK::setCSBKData(unsigned char* bytes)
 {
-    m_data = bytes;
+    for(unsigned int i=0; i<10; i++)
+    {
+        m_data[i] = bytes[i];
+    }
 }
 
 bool CDMRCSBK::put(const unsigned char* bytes)

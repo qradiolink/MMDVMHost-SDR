@@ -2642,7 +2642,7 @@ bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
     data[9U] = 0x00;
     data[10U] = 0x00;
     data[11U] = 0x00;
-    csbk.setCSBKData(data);
+    csbk.setCSBKData(data + 2U);
     csbk.get(data + 2U);
 
     CDMRSlotType slotType;
