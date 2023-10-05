@@ -45,6 +45,11 @@ CDMRCSBK::~CDMRCSBK()
 	delete[] m_data;
 }
 
+void CDMRCSBK::setCSBKData(unsigned char* bytes)
+{
+    m_data = bytes;
+}
+
 bool CDMRCSBK::put(const unsigned char* bytes)
 {
 	assert(bytes != NULL);
