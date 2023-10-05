@@ -28,6 +28,8 @@
 #include "Modem.h"
 #include "Utils.h"
 #include "Log.h"
+#include "CRC.h"
+#include "DMRShortLC.h"
 
 #include <cmath>
 #include <cstdio>
@@ -2620,6 +2622,24 @@ bool CModem::writeDMRAbort(unsigned int slotNo)
 	// CUtils::dump(1U, "Written", buffer, 4U);
 
 	return m_port->write(buffer, 4U) == 4;
+}
+
+void CModem::setShortLC(unsigned int systemCode, bool isControlChannel, bool registrationRequired)
+{
+	// Used for setting CACH on TSCC and Payload Ch
+	unsigned char lc[5U];
+    // 7.1.2.1 Control Channel System Parameters
+    // 7.1.2.2 Payload Channel System Parameters
+	lc[0U] = isControlChannel? 0x20U : 0x30; // Model hardcoded to 00 (Tiny), first 2 bits of NET hardcoded to 0
+	lc[1U] = (systemCode >> 2) & 0XFF; // 7 bit NET + 1 bit Site
+	unsigned int regi = (unsigned int) registrationRequired;
+	lc[2U] = ((systemCode & 0x3) << 6) | (regi << 5); // 2 bit Site, 1 bit Reg_Required, rest of bits CSC
+	lc[3U] = 0x01U; // This should increment from 1 to 511, but I don't see how to do that right now
+	lc[4U] = CCRC::crc8(lc, 4U);
+	unsigned char sLC[9U];
+	CDMRShortLC shortLC;
+	shortLC.encode(lc, sLC);
+	this->writeDMRShortLC(sLC);
 }
 
 bool CModem::writeDMRShortLC(const unsigned char* lc)

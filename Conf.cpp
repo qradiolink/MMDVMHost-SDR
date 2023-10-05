@@ -144,6 +144,9 @@ m_dstarErrorReply(true),
 m_dstarRemoteGateway(false),
 m_dstarModeHang(10U),
 m_dmrEnabled(false),
+m_controlChannel(true),
+m_systemCode(9),
+m_registrationRequired(true),
 m_dmrBeacons(DMR_BEACONS_OFF),
 m_dmrBeaconInterval(60U),
 m_dmrBeaconDuration(3U),
@@ -667,6 +670,12 @@ bool CConf::read()
 		} else if (section == SECTION_DMR) {
 			if (::strcmp(key, "Enable") == 0)
 				m_dmrEnabled = ::atoi(value) == 1;
+            if (::strcmp(key, "ControlChannel") == 0)
+				m_controlChannel = ::atoi(value) == 1;
+            if (::strcmp(key, "SystemCode") == 0)
+				m_controlChannel = (unsigned int)::atoi(value);
+            if (::strcmp(key, "RegistrationRequired") == 0)
+				m_registrationRequired = ::atoi(value) == 1;
 			else if (::strcmp(key, "Beacons") == 0)
 				m_dmrBeacons = ::atoi(value) == 1 ? DMR_BEACONS_NETWORK : DMR_BEACONS_OFF;
 			else if (::strcmp(key, "BeaconInterval") == 0) {
@@ -1541,6 +1550,21 @@ unsigned int CConf::getDStarModeHang() const
 bool CConf::getDMREnabled() const
 {
 	return m_dmrEnabled;
+}
+
+bool CConf::getControlChannel() const
+{
+    return m_controlChannel;
+}
+
+unsigned int CConf::getSystemCode() const
+{
+    return m_systemCode;
+}
+
+bool CConf::getRegistrationRequired() const
+{
+    return m_registrationRequired;
 }
 
 DMR_BEACONS CConf::getDMRBeacons() const
