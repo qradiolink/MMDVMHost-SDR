@@ -673,7 +673,7 @@ bool CConf::read()
             if (::strcmp(key, "ControlChannel") == 0)
 				m_controlChannel = ::atoi(value) == 1;
             if (::strcmp(key, "SystemCode") == 0)
-				m_controlChannel = (unsigned int)::atoi(value);
+				m_systemCode = (unsigned int)::atoi(value);
             if (::strcmp(key, "RegistrationRequired") == 0)
 				m_registrationRequired = ::atoi(value) == 1;
 			else if (::strcmp(key, "Beacons") == 0)
