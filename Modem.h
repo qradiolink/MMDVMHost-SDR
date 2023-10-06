@@ -130,7 +130,7 @@ public:
 	bool writeDMRStart(bool tx);
     bool writeDMRAloha(unsigned int systemCode, bool registrationRequired);
     void setShortLC(unsigned int systemCode, bool isControlChannel, bool registrationRequired);
-	bool writeDMRShortLC(const unsigned char* lc);
+	bool writeDMRShortLC(const unsigned char* lc, bool control);
 	bool writeDMRAbort(unsigned int slotNo);
 
 	bool writeTransparentData(const unsigned char* data, unsigned int length);

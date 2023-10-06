@@ -2066,7 +2066,7 @@ void CDMRSlot::setShortLC(unsigned int slotNo, unsigned int id, FLCO flco, ACTIV
 	CDMRShortLC shortLC;
 	shortLC.encode(lc, sLC);
 
-	m_modem->writeDMRShortLC(sLC);
+	m_modem->writeDMRShortLC(sLC, false);
 }
 
 bool CDMRSlot::openFile()

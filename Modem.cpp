@@ -2683,11 +2683,13 @@ void CModem::setShortLC(unsigned int systemCode, bool isControlChannel, bool reg
 	unsigned char sLC[9U];
 	CDMRShortLC shortLC;
 	shortLC.encode(lc, sLC);
-	this->writeDMRShortLC(sLC);
+	this->writeDMRShortLC(sLC, true);
 }
 
-bool CModem::writeDMRShortLC(const unsigned char* lc)
+bool CModem::writeDMRShortLC(const unsigned char* lc, bool control)
 {
+    if(!control)
+        return true;
 	assert(m_port != NULL);
 	assert(lc != NULL);
 
