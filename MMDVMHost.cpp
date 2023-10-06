@@ -753,11 +753,11 @@ int CMMDVMHost::run()
 			m_remoteControl = NULL;
 		}
 	}
-
+    setMode(MODE_DMR);
 	m_modem->setShortLC(m_conf.getSystemCode(), m_conf.getControlChannel(), m_conf.getRegistrationRequired());
 	if(m_conf.getControlChannel())
     {
-        setMode(MODE_DMR);
+        
         m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
         m_modem->writeDMRStart(true);
     }
