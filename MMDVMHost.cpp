@@ -608,7 +608,19 @@ int CMMDVMHost::run()
 		m_dmr = new CDMRControl(id, colorCode, callHang, selfOnly, embeddedLCOnly, dumpTAData, prefixes, blackList, whiteList, slot1TGWhiteList, slot2TGWhiteList, m_timeout, m_modem, m_dmrNetwork, m_display, m_duplex, m_dmrLookup, rssi, jitter, ovcm);
 
 		m_dmrTXTimer.setTimeout(txHang);
-	}
+        
+        // Tier III options
+        setMode(MODE_DMR);
+        if(m_conf.getSystemCode())
+        {
+            m_modem->setShortLC(m_conf.getSystemCode(), m_conf.getControlChannel(), m_conf.getRegistrationRequired());
+        }
+        if(m_conf.getControlChannel())
+        {
+            m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
+        }
+        m_modem->writeDMRStart(true);
+    }
 
 	if (m_ysfEnabled) {
 		bool lowDeviation   = m_conf.getFusionLowDeviation();
@@ -753,13 +765,7 @@ int CMMDVMHost::run()
 			m_remoteControl = NULL;
 		}
 	}
-    setMode(MODE_DMR);
-	m_modem->setShortLC(m_conf.getSystemCode(), m_conf.getControlChannel(), m_conf.getRegistrationRequired());
-	if(m_conf.getControlChannel())
-    {
-        m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
-    }
-    m_modem->writeDMRStart(true);
+    
 
 	LogMessage("MMDVMHost-%s is running", VERSION);
 
