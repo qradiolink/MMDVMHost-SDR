@@ -618,8 +618,9 @@ int CMMDVMHost::run()
         if(m_conf.getControlChannel())
         {
             m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
+            m_modem->writeDMRStart(true);
         }
-        m_modem->writeDMRStart(true);
+
     }
 
 	if (m_ysfEnabled) {
@@ -1288,8 +1289,10 @@ int CMMDVMHost::run()
 
 		m_dmrTXTimer.clock(ms);
 		if (m_dmrTXTimer.isRunning() && m_dmrTXTimer.hasExpired()) {
-			//if(!m_conf.getControlChannel())
-            //    m_modem->writeDMRStart(false);
+            if(!m_conf.getControlChannel())
+            {
+                m_modem->writeDMRStart(false);
+            }
 			m_dmrTXTimer.stop();
 		}
 
