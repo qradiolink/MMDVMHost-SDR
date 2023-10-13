@@ -610,15 +610,17 @@ int CMMDVMHost::run()
 		m_dmrTXTimer.setTimeout(txHang);
         
         // Tier III options
-        setMode(MODE_DMR);
-        if(m_conf.getSystemCode())
+        if(m_conf.getDMRTrunking())
         {
+            setMode(MODE_DMR);
+
             m_modem->setShortLC(m_conf.getSystemCode(), m_conf.getControlChannel(), m_conf.getRegistrationRequired());
-        }
-        if(m_conf.getControlChannel())
-        {
-            m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
-            m_modem->writeDMRStart(true);
+
+            if(m_conf.getControlChannel())
+            {
+                m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
+                m_modem->writeDMRStart(true);
+            }
         }
 
     }
@@ -977,7 +979,7 @@ int CMMDVMHost::run()
 		if (transparentSocket != NULL && len > 0U)
 			transparentSocket->write(data, len, transparentAddress, transparentAddrLen);
 
-		if (!m_fixedMode) {
+		if (!m_fixedMode && !m_conf.getDMRTrunking()) {
 			if (m_modeTimer.isRunning() && m_modeTimer.hasExpired())
 				setMode(MODE_IDLE);
 		}
@@ -1282,14 +1284,21 @@ int CMMDVMHost::run()
 
 		dmrBeaconDurationTimer.clock(ms);
 		if (dmrBeaconDurationTimer.isRunning() && dmrBeaconDurationTimer.hasExpired()) {
-			if (!m_fixedMode)
+			if (!m_fixedMode && !m_conf.getDMRTrunking())
 				setMode(MODE_IDLE);
 			dmrBeaconDurationTimer.stop();
 		}
 
 		m_dmrTXTimer.clock(ms);
 		if (m_dmrTXTimer.isRunning() && m_dmrTXTimer.hasExpired()) {
-            if(!m_conf.getControlChannel())
+            if(m_conf.getDMRTrunking())
+            {
+                if(!m_conf.getControlChannel())
+                {
+                    m_modem->writeDMRStart(false);
+                }
+            }
+            else
             {
                 m_modem->writeDMRStart(false);
             }

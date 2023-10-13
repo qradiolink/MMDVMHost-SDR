@@ -127,6 +127,7 @@ public:
 
   // The DMR section
   bool         getDMREnabled() const;
+  bool         getDMRTrunking() const;
   bool         getControlChannel() const;
   unsigned int getSystemCode() const;
   bool         getRegistrationRequired() const;
@@ -462,6 +463,7 @@ private:
   unsigned int m_dstarModeHang;
 
   bool         m_dmrEnabled;
+  bool         m_dmrTrunking;
   bool         m_controlChannel;
   unsigned int m_systemCode;
   bool         m_registrationRequired;

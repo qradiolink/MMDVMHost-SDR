@@ -144,6 +144,7 @@ m_dstarErrorReply(true),
 m_dstarRemoteGateway(false),
 m_dstarModeHang(10U),
 m_dmrEnabled(false),
+m_dmrTrunking(false),
 m_controlChannel(true),
 m_systemCode(0),
 m_registrationRequired(true),
@@ -670,6 +671,8 @@ bool CConf::read()
 		} else if (section == SECTION_DMR) {
 			if (::strcmp(key, "Enable") == 0)
 				m_dmrEnabled = ::atoi(value) == 1;
+            if (::strcmp(key, "Trunking") == 0)
+				m_dmrTrunking = ::atoi(value) == 1;
             if (::strcmp(key, "ControlChannel") == 0)
 				m_controlChannel = ::atoi(value) == 1;
             if (::strcmp(key, "SystemCode") == 0)
@@ -1550,6 +1553,11 @@ unsigned int CConf::getDStarModeHang() const
 bool CConf::getDMREnabled() const
 {
 	return m_dmrEnabled;
+}
+
+bool CConf::getDMRTrunking() const
+{
+	return m_dmrTrunking;
 }
 
 bool CConf::getControlChannel() const
