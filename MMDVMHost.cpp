@@ -812,7 +812,7 @@ int CMMDVMHost::run()
 			if (m_mode == MODE_IDLE) {
 				if (m_duplex) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret) {
+					if (ret || m_conf.getDMRTrunking()) {
 						m_modeTimer.setTimeout(m_dmrRFModeHang);
 						setMode(MODE_DMR);
 						dmrBeaconDurationTimer.stop();
@@ -826,7 +826,7 @@ int CMMDVMHost::run()
 			} else if (m_mode == MODE_DMR) {
 				if (m_duplex && !m_modem->hasTX()) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret) {
+					if (ret || m_conf.getDMRTrunking()) {
 						m_modem->writeDMRStart(true);
 						m_dmrTXTimer.start();
 					}
@@ -849,7 +849,7 @@ int CMMDVMHost::run()
 			if (m_mode == MODE_IDLE) {
 				if (m_duplex) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret) {
+					if (ret || m_conf.getDMRTrunking()) {
 						m_modeTimer.setTimeout(m_dmrRFModeHang);
 						setMode(MODE_DMR);
 						dmrBeaconDurationTimer.stop();
@@ -863,7 +863,7 @@ int CMMDVMHost::run()
 			} else if (m_mode == MODE_DMR) {
 				if (m_duplex && !m_modem->hasTX()) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret) {
+					if (ret || m_conf.getDMRTrunking()) {
 						m_modem->writeDMRStart(true);
 						m_dmrTXTimer.start();
 					}
