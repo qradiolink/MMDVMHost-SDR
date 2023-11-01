@@ -619,7 +619,6 @@ int CMMDVMHost::run()
             if(m_conf.getControlChannel())
             {
                 m_modem->writeDMRAloha(m_conf.getSystemCode(), m_conf.getRegistrationRequired());
-                m_modem->writeDMRStart(true);
             }
         }
 
@@ -812,7 +811,7 @@ int CMMDVMHost::run()
 			if (m_mode == MODE_IDLE) {
 				if (m_duplex) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret || m_conf.getDMRTrunking()) {
+					if (ret) {
 						m_modeTimer.setTimeout(m_dmrRFModeHang);
 						setMode(MODE_DMR);
 						dmrBeaconDurationTimer.stop();
@@ -826,7 +825,7 @@ int CMMDVMHost::run()
 			} else if (m_mode == MODE_DMR) {
 				if (m_duplex && !m_modem->hasTX()) {
 					bool ret = m_dmr->processWakeup(data);
-					if (ret || m_conf.getDMRTrunking()) {
+					if (ret) {
 						m_modem->writeDMRStart(true);
 						m_dmrTXTimer.start();
 					}

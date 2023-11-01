@@ -314,8 +314,8 @@ void CDMRGatewayNetwork::clock(unsigned int ms)
 		return;
 
 	if (!CUDPSocket::match(m_addr, address)) {
-		//LogMessage("DMR, packet received from an invalid source");
-		//return;
+		LogMessage("DMR, packet received from an invalid source");
+		return;
 	}
 
 	if (m_debug)
