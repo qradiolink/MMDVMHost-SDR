@@ -1044,8 +1044,8 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 	if (!m_enabled)
 		return;
 
-	if (m_rfState != RS_RF_LISTENING && m_netState == RS_NET_IDLE)
-		return;
+	//if (m_rfState != RS_RF_LISTENING && m_netState == RS_NET_IDLE)
+	//	return;
 
 	m_networkWatchdog.start();
 
