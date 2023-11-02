@@ -2637,7 +2637,7 @@ bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
     data[5U] = 0x00; // TODO
     data[6U] = ((unsigned int)registrationRequired) << 4; // TODO
     data[7U] = (systemCode >> 6) & 0xFF;
-    data[8U] = (systemCode << 2) & 0xFF;  // PAR hardcoded to 0
+    data[8U] = ((systemCode << 2) | 0x03) & 0xFF;  // PAR hardcoded to 11
     // MS Address
     data[9U] = 0x00;
     data[10U] = 0x00;
