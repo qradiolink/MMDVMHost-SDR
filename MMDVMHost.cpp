@@ -767,7 +767,9 @@ int CMMDVMHost::run()
 			m_remoteControl = NULL;
 		}
 	}
-    
+	
+	if(!m_conf.getDMRTrunking())
+        setMode(MODE_IDLE);
 
 	LogMessage("MMDVMHost-%s is running", VERSION);
 
@@ -1445,6 +1447,7 @@ bool CMMDVMHost::createModem()
 	unsigned int ax25SlotTime    = m_conf.getAX25SlotTime();
 	unsigned int ax25PPersist    = m_conf.getAX25PPersist();
 	bool useCOSAsLockout         = m_conf.getModemUseCOSAsLockout();
+    bool trunking                = m_conf.getDMRTrunking();
 
 	LogInfo("Modem Parameters");
 	LogInfo("    Protocol: %s", protocol.c_str());
@@ -1489,7 +1492,7 @@ bool CMMDVMHost::createModem()
 	LogInfo("    TX Frequency: %uHz (%uHz)", txFrequency, txFrequency + txOffset);
 	LogInfo("    Use COS as Lockout: %s", useCOSAsLockout ? "yes" : "no");
 
-	m_modem = new CModem(m_duplex, rxInvert, txInvert, pttInvert, txDelay, dmrDelay, useCOSAsLockout, trace, debug);
+	m_modem = new CModem(m_duplex, rxInvert, txInvert, pttInvert, txDelay, dmrDelay, useCOSAsLockout, trace, debug, trunking);
 
 	IModemPort* port = NULL;
 	if (protocol == "uart")

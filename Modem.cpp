@@ -125,7 +125,7 @@ const unsigned char CAP2_POCSAG = 0x01U;
 const unsigned char CAP2_AX25   = 0x02U;
 
 
-CModem::CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug) :
+CModem::CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug, bool trunking) :
 m_protocolVersion(0U),
 m_dmrColorCode(0U),
 m_ysfLoDev(false),
@@ -257,7 +257,8 @@ m_fmExtAudioBoost(1U),
 m_fmMaxDevLevel(90.0F),
 m_fmExtEnable(false),
 m_capabilities1(0x00U),
-m_capabilities2(0x00U)
+m_capabilities2(0x00U),
+m_trunking(trunking)
 {
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -2688,7 +2689,7 @@ void CModem::setShortLC(unsigned int systemCode, bool isControlChannel, bool reg
 
 bool CModem::writeDMRShortLC(const unsigned char* lc, bool control)
 {
-    if(!control)
+    if(!control && m_trunking)
         return true;
 	assert(m_port != NULL);
 	assert(lc != NULL);
@@ -3029,3 +3030,9 @@ void CModem::printDebug()
 		CUtils::dump(1U, "Debug: Data", m_buffer + m_offset, m_length - m_offset);
 	}
 }
+
+bool CModem::getDMRTrunking() const
+{
+    return m_trunking;
+}
+

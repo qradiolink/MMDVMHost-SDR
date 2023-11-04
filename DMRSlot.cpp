@@ -445,12 +445,13 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				return false;
 
 			// set the OVCM bit for the supported csbk
-            /* Avoid clobbering CSBK bits
-			if (m_ovcm == DMR_OVCM_TX_ON || m_ovcm == DMR_OVCM_ON)
-				csbk.setOVCM(true);
-			else if (m_ovcm == DMR_OVCM_FORCE_OFF)
-				csbk.setOVCM(false);
-            */
+            if(!m_modem->getDMRTrunking())
+            {
+                if (m_ovcm == DMR_OVCM_TX_ON || m_ovcm == DMR_OVCM_ON)
+                    csbk.setOVCM(true);
+                else if (m_ovcm == DMR_OVCM_FORCE_OFF)
+                    csbk.setOVCM(false);
+            }
 
 			bool gi = csbk.getGI();
 			unsigned int srcId = csbk.getSrcId();
@@ -482,8 +483,8 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 			data[0U] = TAG_DATA;
 			data[1U] = 0x00U;
 
-			//if (m_duplex)
-			//	writeQueueRF(data);
+			if (m_duplex && !m_modem->getDMRTrunking())
+                writeQueueRF(data);
 
 			writeNetworkRF(data, DT_CSBK, gi ? FLCO_GROUP : FLCO_USER_USER, srcId, dstId);
 
@@ -1044,8 +1045,8 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 	if (!m_enabled)
 		return;
 
-	//if (m_rfState != RS_RF_LISTENING && m_netState == RS_NET_IDLE)
-	//	return;
+	if (m_rfState != RS_RF_LISTENING && m_netState == RS_NET_IDLE && !m_modem->getDMRTrunking())
+		return;
 
 	m_networkWatchdog.start();
 
@@ -1620,12 +1621,13 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 			return;
 
 		// set the OVCM bit for the supported csbk
-        /*
-		if (m_ovcm == DMR_OVCM_RX_ON || m_ovcm == DMR_OVCM_ON)
-			csbk.setOVCM(true);
-		else if (m_ovcm == DMR_OVCM_FORCE_OFF)
-			csbk.setOVCM(false);
-        */
+        if(!m_modem->getDMRTrunking())
+        {
+            if (m_ovcm == DMR_OVCM_RX_ON || m_ovcm == DMR_OVCM_ON)
+                csbk.setOVCM(true);
+            else if (m_ovcm == DMR_OVCM_FORCE_OFF)
+                csbk.setOVCM(false);
+        }
 
 		bool gi = csbk.getGI();
 		unsigned int srcId = csbk.getSrcId();
