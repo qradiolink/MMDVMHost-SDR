@@ -2312,7 +2312,7 @@ bool CModem::setConfig2()
 	buffer[25U] = (unsigned char)m_nxdnTXHang;
 	buffer[26U] = (unsigned char)m_m17TXHang;
 	buffer[27U] = 0x00U;
-	buffer[28U] = 0x00U;
+	buffer[28U] = ((int)m_trunking) << 7;
 
 	buffer[29U] = m_dmrColorCode;
 	buffer[30U] = m_dmrDelay;
@@ -2628,9 +2628,20 @@ bool CModem::writeDMRAbort(unsigned int slotNo)
 
 bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
 {
+    // 7.1.1.1.4 Aloha (C_ALOHA) CSBK PDU
+
 	assert(m_port != NULL);
 	CDMRCSBK csbk;
     unsigned char data[DMR_FRAME_LENGTH_BYTES + 2U];
+    unsigned int tsccas = 0; 
+    unsigned int timeslot_synchronization = 0;
+    unsigned int version = 1; // 3 bits
+    unsigned int offset_timing = 0;
+    unsigned int net_connection = 1;
+    unsigned int mask = 0; // 5 bits
+    unsigned int service_function = 0; // 2 bits
+    unsigned int n_rand_wait = 4; // 4 bits
+    unsigned int backoff = 1; // 4 bits
     
     data[2U] = 0x99;
     data[3U] = 0x00;
