@@ -2635,25 +2635,26 @@ bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
     unsigned char data[DMR_FRAME_LENGTH_BYTES + 2U];
     unsigned int tsccas = 0; 
     unsigned int timeslot_synchronization = 0;
-    unsigned int version = 1; // 3 bits
+    unsigned int version = 2; // 3 bits
     unsigned int offset_timing = 0;
     unsigned int net_connection = 1;
     unsigned int mask = 0; // 5 bits
-    unsigned int service_function = 0; // 2 bits
-    unsigned int n_rand_wait = 4; // 4 bits
+    unsigned int service_function = 0; // 2 bits (ALL)
+    unsigned int n_rand_wait = 2; // 4 bits
     unsigned int backoff = 1; // 4 bits
+    unsigned int ALLMSI = 0xFFFED4;
     
     data[2U] = 0x99;
-    data[3U] = 0x00;
-    data[4U] = 0x0D; // To test
-    data[5U] = 0x00; // TODO
-    data[6U] = ((unsigned int)registrationRequired) << 4; // TODO
+    data[3U] = 0x00; // FID
+    data[4U] = (tsccas << 6) | (timeslot_synchronization << 5) | ((version & 0x07) << 2) | (offset_timing << 1) | net_connection;
+    data[5U] = ((mask & 0x1F)  << 3) | ((service_function & 0x03) << 1) | ((n_rand_wait & 0x0F) >> 3); // TODO
+    data[6U] = ((n_rand_wait & 0x0F) << 5) | (((unsigned int)registrationRequired) << 4) | (backoff & 0xF); // TODO
     data[7U] = (systemCode >> 6) & 0xFF;
     data[8U] = ((systemCode << 2) | 0x03) & 0xFF;  // PAR hardcoded to 11
     // MS Address
-    data[9U] = 0x00;
-    data[10U] = 0x00;
-    data[11U] = 0x00;
+    data[9U] = ALLMSI >> 16;
+    data[10U] = (ALLMSI >> 8) & 0xFF;
+    data[11U] = ALLMSI & 0xFF;
     csbk.setCSBKData(data + 2U);
     csbk.get(data + 2U);
 
