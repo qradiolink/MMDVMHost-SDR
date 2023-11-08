@@ -2640,8 +2640,8 @@ bool CModem::writeDMRAloha(unsigned int systemCode, bool registrationRequired)
     unsigned int net_connection = 1;
     unsigned int mask = 0; // 5 bits
     unsigned int service_function = 0; // 2 bits (ALL)
-    unsigned int n_rand_wait = 2; // 4 bits
-    unsigned int backoff = 1; // 4 bits
+    unsigned int n_rand_wait = 5; // 4 bits
+    unsigned int backoff = 4; // 4 bits
     unsigned int ALLMSI = 0xFFFED4;
     
     data[2U] = 0x99;
