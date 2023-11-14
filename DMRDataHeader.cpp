@@ -40,7 +40,8 @@ m_dstId(0U),
 m_blocks(0U),
 m_F(false),
 m_S(false),
-m_Ns(0U)
+m_Ns(0U),
+m_UDT(false)
 {
 	m_data = new unsigned char[12U];
 }
@@ -119,6 +120,7 @@ bool CDMRDataHeader::put(const unsigned char* bytes)
 	case DPF_UDT:
 		CUtils::dump(1U, "DMR, Unified Data Transport Header", m_data, 12U);
 		m_blocks = (m_data[8U] & 0x03U) + 1U;
+        m_UDT = true;
 		break;
 
 	default:
@@ -132,6 +134,16 @@ bool CDMRDataHeader::put(const unsigned char* bytes)
 void CDMRDataHeader::get(unsigned char* bytes) const
 {
 	assert(bytes != NULL);
+    if(m_UDT)
+    {
+        // Table B.1: CSBK/MBC/UDT Opcode List
+        // Convert to Unified Data Transport outbound Header
+        m_data[9U] &= 0xFE;
+        CCRC::addCCITT162(m_data, 12U);
+        // Restore the checksum
+        m_data[10U] ^= DATA_HEADER_CRC_MASK[0U];
+        m_data[11U] ^= DATA_HEADER_CRC_MASK[1U];
+    }
 
 	CBPTC19696 bptc;
 	bptc.encode(m_data, bytes);
