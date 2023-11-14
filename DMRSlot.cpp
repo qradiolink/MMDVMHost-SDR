@@ -514,7 +514,8 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 				LogMessage("DMR Slot %u, received RF Radio Check %s CSBK from %s to %s%s", m_slotNo, /* TBD */ 1 ? "Req" : "Ack", src.c_str(), gi ? "TG " : "", dst.c_str());
 				break;
 			default:
-				LogWarning("DMR Slot %u, unhandled RF CSBK type - 0x%02X", m_slotNo, csbko);
+				LogMessage("DMR Slot %u, received unhandled CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG " : "", dst.c_str());
+				//LogWarning("DMR Slot %u, unhandled RF CSBK type - 0x%02X", m_slotNo, csbko);
 				break;
 			}
 
