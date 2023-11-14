@@ -31,7 +31,14 @@ enum CSBKO {
 	CSBKO_RADIO_CHECK    = 0x24,
 	CSBKO_NACKRSP        = 0x26,
 	CSBKO_BSDWNACT       = 0x38,
-	CSBKO_PRECCSBK       = 0x3D
+	CSBKO_PRECCSBK       = 0x3D,
+    CSBKO_MAINT          = 0x2A,
+    CSBKO_TV_GRANT       = 0x31,
+    CSBKO_PV_GRANT       = 0x30,
+    CSBKO_AHOY           = 0x1C,
+    CSBKO_ACKU           = 0x21,
+    CSBKO_P_CLEAR        = 0x2E,
+    CSBKO_C_BCAST        = 0x28
 };
 
 class CDMRCSBK
