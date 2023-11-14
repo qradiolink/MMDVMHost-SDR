@@ -2013,7 +2013,11 @@ void CDMRSlot::setShortLC(unsigned int slotNo, unsigned int id, FLCO flco, ACTIV
 
 	// If we have no activity to report, let the modem send the null Short LC when it's ready
 	if (m_id1 == 0U && m_id2 == 0U)
-		return;
+    {
+        unsigned char sLC[9U];
+		m_modem->writeDMRShortLC(sLC, false);
+        return;
+    }
 
 	unsigned char lc[5U];
 	lc[0U] = 0x01U;
@@ -2068,7 +2072,7 @@ void CDMRSlot::setShortLC(unsigned int slotNo, unsigned int id, FLCO flco, ACTIV
 	CDMRShortLC shortLC;
 	shortLC.encode(lc, sLC);
 
-	m_modem->writeDMRShortLC(sLC, false);
+	m_modem->writeDMRShortLC(sLC, true);
 }
 
 bool CDMRSlot::openFile()
