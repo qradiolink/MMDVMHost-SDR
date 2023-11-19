@@ -286,7 +286,6 @@ private:
 	unsigned char              m_capabilities1;
 	unsigned char              m_capabilities2;
     bool                       m_trunking;
-    unsigned char              m_sLC[9U];
 
 	bool readVersion();
 	bool readStatus();

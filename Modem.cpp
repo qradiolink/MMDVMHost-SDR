@@ -2696,16 +2696,13 @@ void CModem::setShortLC(unsigned int systemCode, bool isControlChannel, bool reg
 	unsigned char sLC[9U];
 	CDMRShortLC shortLC;
 	shortLC.encode(lc, sLC);
-    ::memcpy(m_sLC, sLC, 9U);
 	this->writeDMRShortLC(sLC, true);
 }
 
 bool CModem::writeDMRShortLC(const unsigned char* lc, bool control)
 {
     if(!control && m_trunking)
-    {
-        lc = m_sLC;
-    }
+        return true;
 	assert(m_port != NULL);
 	assert(lc != NULL);
 
