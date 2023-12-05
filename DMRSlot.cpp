@@ -1715,6 +1715,7 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 		}
     } else if (dataType == DT_MBC_HEADER) {
 		CDMRCSBK csbk;
+        csbk.setDataType(DT_MBC_HEADER);
 		bool valid = csbk.put(data + 2U);
 		if (!valid) {
 			LogMessage("DMR Slot %u, unable to decode the network CSBK", m_slotNo);
@@ -1820,6 +1821,7 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 		}
     } else if (dataType == DT_MBC_CONTINUATION) {
 		CDMRCSBK csbk;
+        csbk.setDataType(DT_MBC_CONTINUATION);
 		bool valid = csbk.put(data + 2U);
 		if (!valid) {
 			LogMessage("DMR Slot %u, unable to decode the network CSBK", m_slotNo);

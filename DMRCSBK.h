@@ -73,6 +73,8 @@ public:
 	unsigned char getCBF() const;
 
 	void          setCBF(unsigned char cbf);
+    void          setDataType(unsigned char dataType);
+    unsigned char getDataType();
 
 private:
 	unsigned char* m_data;
@@ -85,6 +87,7 @@ private:
 	bool           m_dataContent;
 	unsigned char  m_CBF;
 	bool           m_OVCM;
+    unsigned char  m_dataType;
 };
 
 #endif

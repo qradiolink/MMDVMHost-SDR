@@ -35,7 +35,8 @@ m_srcId(0U),
 m_dstId(0U),
 m_dataContent(false),
 m_CBF(0U),
-m_OVCM(false)
+m_OVCM(false),
+m_dataType(DT_CSBK)
 {
 	m_data = new unsigned char[12U];
 }
@@ -59,17 +60,32 @@ bool CDMRCSBK::put(const unsigned char* bytes)
 
 	CBPTC19696 bptc;
 	bptc.decode(bytes, m_data);
-
-	m_data[10U] ^= CSBK_CRC_MASK[0U];
-	m_data[11U] ^= CSBK_CRC_MASK[1U];
+    if(m_dataType == DT_CSBK)
+    {
+        m_data[10U] ^= CSBK_CRC_MASK[0U];
+        m_data[11U] ^= CSBK_CRC_MASK[1U];
+    }
+    else
+    {
+        m_data[10U] ^= CSBK_MBC_MASK[0U];
+        m_data[11U] ^= CSBK_MBC_MASK[1U];
+    }
 
 	bool valid = CCRC::checkCCITT162(m_data, 12U);
 	if (!valid)
 		return false;
 
 	// Restore the checksum
-	m_data[10U] ^= CSBK_CRC_MASK[0U];
-	m_data[11U] ^= CSBK_CRC_MASK[1U];
+	if(m_dataType == DT_CSBK)
+    {
+        m_data[10U] ^= CSBK_CRC_MASK[0U];
+        m_data[11U] ^= CSBK_CRC_MASK[1U];
+    }
+    else
+    {
+        m_data[10U] ^= CSBK_MBC_MASK[0U];
+        m_data[11U] ^= CSBK_MBC_MASK[1U];
+    }
 
 	m_CSBKO = CSBKO(m_data[0U] & 0x3FU);
 	m_FID   = m_data[1U];
@@ -261,3 +277,14 @@ void CDMRCSBK::setCBF(unsigned char cbf)
 {
 	m_CBF = m_data[3U] = cbf;
 }
+
+void CDMRCSBK::setDataType(unsigned char dataType)
+{
+    m_dataType = dataType;
+}
+
+unsigned char CDMRCSBK::getDataType()
+{
+    return m_dataType;
+}
+
