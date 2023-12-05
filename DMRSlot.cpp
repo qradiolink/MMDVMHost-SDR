@@ -1713,6 +1713,111 @@ void CDMRSlot::writeNetwork(const CDMRData& dmrData)
 			setShortLC(m_slotNo, dstId, gi ? FLCO_GROUP : FLCO_USER_USER, ACTIVITY_DATA);
 			m_display->writeDMR(m_slotNo, src, gi, dst, "N");
 		}
+    } else if (dataType == DT_MBC_HEADER) {
+		CDMRCSBK csbk;
+		bool valid = csbk.put(data + 2U);
+		if (!valid) {
+			LogMessage("DMR Slot %u, unable to decode the network CSBK", m_slotNo);
+			return;
+		}
+
+		CSBKO csbko = csbk.getCSBKO();
+		if (csbko == CSBKO_BSDWNACT)
+			return;
+
+		// set the OVCM bit for the supported csbk
+        if(!m_modem->getDMRTrunking())
+        {
+            if (m_ovcm == DMR_OVCM_RX_ON || m_ovcm == DMR_OVCM_ON)
+                csbk.setOVCM(true);
+            else if (m_ovcm == DMR_OVCM_FORCE_OFF)
+                csbk.setOVCM(false);
+        }
+
+		bool gi = csbk.getGI();
+		unsigned int srcId = csbk.getSrcId();
+		unsigned int dstId = csbk.getDstId();
+
+		// Regenerate the CSBK data
+		csbk.get(data + 2U);
+
+		// Regenerate the Slot Type
+		CDMRSlotType slotType;
+		slotType.putData(data + 2U);
+        slotType.setDataType(DT_MBC_HEADER);
+		slotType.setColorCode(m_colorCode);
+		slotType.getData(data + 2U);
+
+		// Convert the Data Sync to be from the BS or MS as needed
+		CSync::addDMRDataSync(data + 2U, m_duplex);
+
+		data[0U] = TAG_DATA;
+		data[1U] = 0x00U;
+
+		if (csbko == CSBKO_PRECCSBK && csbk.getDataContent()) {
+			unsigned int cbf = NO_PREAMBLE_CSBK + csbk.getCBF() - 1U;
+			for (unsigned int i = 0U; i < NO_PREAMBLE_CSBK; i++, cbf--) {
+				// Change blocks to follow
+				csbk.setCBF(cbf);
+
+				// Regenerate the CSBK data
+				csbk.get(data + 2U);
+
+				// Regenerate the Slot Type
+				CDMRSlotType slotType;
+				slotType.putData(data + 2U);
+				slotType.setColorCode(m_colorCode);
+				slotType.getData(data + 2U);
+
+				// Convert the Data Sync to be from the BS or MS as needed
+				CSync::addDMRDataSync(data + 2U, m_duplex);
+
+				writeQueueNet(data);
+			}
+		} else
+			writeQueueNet(data);
+
+#if defined(DUMP_DMR)
+		openFile();
+		writeFile(data);
+		closeFile();
+#endif
+
+		std::string src = m_lookup->find(srcId);
+		std::string dst = m_lookup->find(dstId);
+
+		switch (csbko) {
+		case CSBKO_UUVREQ:
+			LogMessage("DMR Slot %u, received network Unit to Unit Voice Service Request CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG ": "", dst.c_str());
+			break;
+		case CSBKO_UUANSRSP:
+			LogMessage("DMR Slot %u, received network Unit to Unit Voice Service Answer Response CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG ": "", dst.c_str());
+			break;
+		case CSBKO_NACKRSP:
+			LogMessage("DMR Slot %u, received network Negative Acknowledgment Response CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG ": "", dst.c_str());
+			break;
+		case CSBKO_PRECCSBK:
+			LogMessage("DMR Slot %u, received network %s Preamble CSBK (%u to follow) from %s to %s%s", m_slotNo, csbk.getDataContent() ? "Data" : "CSBK", csbk.getCBF(), src.c_str(), gi ? "TG " : "", dst.c_str());
+			break;
+		case CSBKO_CALL_ALERT:
+			LogMessage("DMR Slot %u, received network Call Alert CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG " : "", dst.c_str());
+			break;
+		case CSBKO_CALL_ALERT_ACK:
+			LogMessage("DMR Slot %u, received network Call Alert Ack CSBK from %s to %s%s", m_slotNo, src.c_str(), gi ? "TG " : "", dst.c_str());
+			break;
+		case CSBKO_RADIO_CHECK:
+			LogMessage("DMR Slot %u, received network Radio Check %s CSBK from %s to %s%s", m_slotNo, /* TBD */ 1 ? "Req" : "Ack", src.c_str(), gi ? "TG " : "", dst.c_str());
+			break;
+		default:
+			LogWarning("DMR Slot %u, unhandled network CSBK type - 0x%02X", m_slotNo, csbko);
+			break;
+		}
+
+		// If data preamble, signal its existence
+		if (csbko == CSBKO_PRECCSBK && csbk.getDataContent()) {
+			setShortLC(m_slotNo, dstId, gi ? FLCO_GROUP : FLCO_USER_USER, ACTIVITY_DATA);
+			m_display->writeDMR(m_slotNo, src, gi, dst, "N");
+		}
 	} else if (dataType == DT_RATE_12_DATA || dataType == DT_RATE_34_DATA || dataType == DT_RATE_1_DATA) {
 		if (m_netState != RS_NET_DATA || m_netFrames == 0U) {
 			writeEndNet();
