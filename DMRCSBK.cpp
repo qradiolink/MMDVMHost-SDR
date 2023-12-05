@@ -65,7 +65,7 @@ bool CDMRCSBK::put(const unsigned char* bytes)
         m_data[10U] ^= CSBK_CRC_MASK[0U];
         m_data[11U] ^= CSBK_CRC_MASK[1U];
     }
-    else
+    else if(m_dataType == DT_MBC_HEADER)
     {
         m_data[10U] ^= CSBK_MBC_MASK[0U];
         m_data[11U] ^= CSBK_MBC_MASK[1U];
@@ -81,7 +81,7 @@ bool CDMRCSBK::put(const unsigned char* bytes)
         m_data[10U] ^= CSBK_CRC_MASK[0U];
         m_data[11U] ^= CSBK_CRC_MASK[1U];
     }
-    else
+    else if(m_dataType == DT_MBC_HEADER)
     {
         m_data[10U] ^= CSBK_MBC_MASK[0U];
         m_data[11U] ^= CSBK_MBC_MASK[1U];
@@ -203,14 +203,30 @@ bool CDMRCSBK::put(const unsigned char* bytes)
 void CDMRCSBK::get(unsigned char* bytes) const
 {
 	assert(bytes != NULL);
+    if(m_dataType == DT_CSBK)
+    {
+        m_data[10U] ^= CSBK_CRC_MASK[0U];
+        m_data[11U] ^= CSBK_CRC_MASK[1U];
 
-	m_data[10U] ^= CSBK_CRC_MASK[0U];
-	m_data[11U] ^= CSBK_CRC_MASK[1U];
+        CCRC::addCCITT162(m_data, 12U);
 
-	CCRC::addCCITT162(m_data, 12U);
+        m_data[10U] ^= CSBK_CRC_MASK[0U];
+        m_data[11U] ^= CSBK_CRC_MASK[1U];
+    }
+    else if(m_dataType == DT_MBC_HEADER)
+    {
+        m_data[10U] ^= CSBK_MBC_MASK[0U];
+        m_data[11U] ^= CSBK_MBC_MASK[1U];
 
-	m_data[10U] ^= CSBK_CRC_MASK[0U];
-	m_data[11U] ^= CSBK_CRC_MASK[1U];
+        CCRC::addCCITT162(m_data, 12U);
+
+        m_data[10U] ^= CSBK_MBC_MASK[0U];
+        m_data[11U] ^= CSBK_MBC_MASK[1U];
+    }
+    else
+    {
+        CCRC::addCCITT162(m_data, 12U);
+    }
 
 	CBPTC19696 bptc;
 	bptc.encode(m_data, bytes);
