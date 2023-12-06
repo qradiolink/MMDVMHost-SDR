@@ -73,7 +73,7 @@ const unsigned char TERMINATOR_WITH_LC_CRC_MASK[] = {0x99U, 0x99U, 0x99U};
 const unsigned char PI_HEADER_CRC_MASK[]          = {0x69U, 0x69U};
 const unsigned char DATA_HEADER_CRC_MASK[]        = {0xCCU, 0xCCU};
 const unsigned char CSBK_CRC_MASK[]               = {0xA5U, 0xA5U};
-const unsigned char CSBK_MBC_MASK[]               = {0xAAU, 0xAAU};
+const unsigned char MBC_CRC_MASK[]               = {0xAAU, 0xAAU};
 
 const unsigned int DMR_SLOT_TIME = 60U;
 const unsigned int AMBE_PER_SLOT = 3U;
