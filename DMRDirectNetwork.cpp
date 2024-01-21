@@ -143,7 +143,7 @@ void CDMRDirectNetwork::enable(bool enabled)
 	m_enabled = enabled;
 }
 
-bool CDMRDirectNetwork::read(CDMRData& data)
+bool CDMRDirectNetwork::read(CDMRData& data, TrunkingCommandParameters &command)
 {
 	if (m_status != RUNNING)
 		return false;

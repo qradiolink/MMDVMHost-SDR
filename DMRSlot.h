@@ -65,6 +65,8 @@ public:
 
 	static void init(unsigned int colorCode, bool embeddedLCOnly, bool dumpTAData, unsigned int callHang, CModem* modem, IDMRNetwork* network, CDisplay* display, bool duplex, CDMRLookup* lookup, CRSSIInterpolator* rssiMapper, unsigned int jitter, DMR_OVCM_TYPES ovcm);
 
+    void setReverseChannel(unsigned int rc_command);
+
 private:
 	unsigned int               m_slotNo;
 	CRingBuffer<unsigned char> m_queue;
@@ -139,6 +141,7 @@ private:
 	static FLCO                m_flco2;
 	static unsigned char       m_id2;
 	static ACTIVITY_TYPE       m_activity2;
+    unsigned int               m_reverseChannelCommand;
 
 	void logGPSPosition(const unsigned char* data);
 

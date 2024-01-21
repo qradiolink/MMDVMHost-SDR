@@ -126,7 +126,7 @@ const unsigned char CAP2_POCSAG = 0x01U;
 const unsigned char CAP2_AX25   = 0x02U;
 
 
-CModem::CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug, bool trunking) :
+CModem::CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug, bool trunking, bool controlChannel) :
 m_protocolVersion(0U),
 m_dmrColorCode(0U),
 m_ysfLoDev(false),
@@ -259,7 +259,8 @@ m_fmMaxDevLevel(90.0F),
 m_fmExtEnable(false),
 m_capabilities1(0x00U),
 m_capabilities2(0x00U),
-m_trunking(trunking)
+m_trunking(trunking),
+m_controlChannel(controlChannel)
 {
 	m_buffer = new unsigned char[BUFFER_LENGTH];
 }
@@ -3047,5 +3048,10 @@ void CModem::printDebug()
 bool CModem::getDMRTrunking() const
 {
     return m_trunking;
+}
+
+bool CModem::getControlChannel() const
+{
+    return m_controlChannel;
 }
 

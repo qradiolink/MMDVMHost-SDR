@@ -44,7 +44,7 @@ public:
 
 	virtual void enable(bool enabled);
 
-	virtual bool read(CDMRData& data);
+	virtual bool read(CDMRData& data, TrunkingCommandParameters &command);
 
 	virtual bool write(const CDMRData& data);
 

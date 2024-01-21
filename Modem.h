@@ -46,7 +46,7 @@ enum SERIAL_STATE {
 
 class CModem {
 public:
-	CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug, bool trunking);
+	CModem(bool duplex, bool rxInvert, bool txInvert, bool pttInvert, unsigned int txDelay, unsigned int dmrDelay, bool useCOSAsLockout, bool trace, bool debug, bool trunking, bool controlChannel);
 	~CModem();
 
 	void setPort(IModemPort* port);
@@ -151,6 +151,7 @@ public:
 
 	void close();
     bool getDMRTrunking() const;
+    bool getControlChannel() const;
 
 private:
 	unsigned int               m_protocolVersion;
@@ -287,6 +288,7 @@ private:
 	unsigned char              m_capabilities1;
 	unsigned char              m_capabilities2;
     bool                       m_trunking;
+    bool                       m_controlChannel;
 
 	bool readVersion();
 	bool readStatus();

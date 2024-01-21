@@ -108,14 +108,42 @@ void CDMRControl::clock()
 {
 	if (m_network != NULL) {
 		CDMRData data;
-		bool ret = m_network->read(data);
+        TrunkingCommandParameters command;
+		bool ret = m_network->read(data, command);
 		if (ret) {
-			unsigned int slotNo = data.getSlotNo();
-			switch (slotNo) {
-				case 1U: m_slot1.writeNetwork(data); break;
-				case 2U: m_slot2.writeNetwork(data); break;
-				default: LogError("Invalid slot no %u", slotNo); break;
-			}
+            if(m_modem->getDMRTrunking() && command.trunkingParams) {
+                switch(command.commandType) {
+                    case DMRCommand::ChannelEnableDisable:
+                    {
+                        if(command.slot == 1) {
+                            if(!m_modem->getControlChannel())
+                                m_slot1.enable(command.channelEnable);
+                        }
+                        else {
+                            m_slot2.enable(command.channelEnable);
+                        }
+                        break;
+                    }
+                    case DMRCommand::RCCeaseTransmission:
+                    {
+                        if(command.slot == 1)
+                            m_slot1.setReverseChannel(command.ceaseTransmission);
+                        else
+                            m_slot2.setReverseChannel(command.ceaseTransmission);
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            else {
+                unsigned int slotNo = data.getSlotNo();
+                switch (slotNo) {
+                    case 1U: m_slot1.writeNetwork(data); break;
+                    case 2U: m_slot2.writeNetwork(data); break;
+                    default: LogError("Invalid slot no %u", slotNo); break;
+                }
+            }
 		}
 	}
 

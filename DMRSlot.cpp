@@ -118,7 +118,8 @@ m_minRSSI(0U),
 m_aveRSSI(0U),
 m_rssiCount(0U),
 m_enabled(true),
-m_fp(NULL)
+m_fp(NULL),
+m_reverseChannelCommand(0)
 {
 	m_lastFrame = new unsigned char[DMR_FRAME_LENGTH_BYTES + 2U];
 
@@ -2452,4 +2453,18 @@ void CDMRSlot::enable(bool enabled)
 	}
 
 	m_enabled = enabled;
+}
+
+void CDMRSlot::setReverseChannel(unsigned int rc_command) {
+    switch(rc_command) {
+        case DMRCommand::RCCeaseTransmission:
+            m_reverseChannelCommand = 0x356A3A95;
+            break;
+        case DMRCommand::RCNoCommand:
+            m_reverseChannelCommand = 0;
+            break;
+        default:
+            m_reverseChannelCommand = 0;
+            break;
+    }
 }
