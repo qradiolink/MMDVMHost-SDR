@@ -144,13 +144,14 @@ bool CDMRGatewayNetwork::read(CDMRData& data, TrunkingCommandParameters &command
             {
                 command.slot = (m_buffer[5U] & 0x80U) == 0x80U ? 2U : 1U;
                 command.channelEnable = (m_buffer[5U] & 0x01U) == 0x01U ? true : false;
-                break;
             }
+            break;
             case DMRCommand::RCCeaseTransmission:
             {
+                command.slot = (m_buffer[5U] & 0x80U) == 0x80U ? 2U : 1U;
                 command.ceaseTransmission = true;
-                break;
             }
+            break;
             default:
                 break;
         }
