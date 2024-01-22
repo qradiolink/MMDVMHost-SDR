@@ -70,6 +70,8 @@ const unsigned int NO_HEADERS_SIMPLEX = 8U;
 const unsigned int NO_HEADERS_DUPLEX  = 3U;
 const unsigned int NO_PREAMBLE_CSBK   = 15U;
 
+const unsigned int RC_CEASE_TRANSMIT[5] = {0x03, 0x56, 0xa3, 0xa9, 0x50};
+
 // #define	DUMP_DMR
 
 CDMRSlot::CDMRSlot(unsigned int slotNo, unsigned int timeout) :
@@ -330,7 +332,7 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 		} else if (dataType == DT_TERMINATOR_WITH_LC) {
 			if (m_rfState != RS_RF_AUDIO)
 				return false;
-
+            m_reverseChannelCommand = DMRCommand::RCNoCommand;
 			// Regenerate the LC data
 			CDMRFullLC fullLC;
 			fullLC.encode(*m_rfLC, data + 2U, DT_TERMINATOR_WITH_LC);
@@ -780,6 +782,16 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 					emb.setLCSS(lcss);
 					emb.getData(data + 2U);
 				}
+				if((m_rfN == 5U) && (m_reverseChannelCommand == DMRCommand::RCCeaseTransmission)) {
+                    data[14U] = (data[14U] & 0xF0U) | (RC_CEASE_TRANSMIT[0U] & 0x0FU);
+                    data[15U] = RC_CEASE_TRANSMIT[1U];
+                    data[16U] = RC_CEASE_TRANSMIT[2U];
+                    data[17U] = RC_CEASE_TRANSMIT[3U];
+                    data[18U] = (data[18U] & 0x0FU) | (RC_CEASE_TRANSMIT[4U] & 0xF0U);
+                    emb.setColorCode(m_colorCode);
+					emb.setLCSS(0);
+					emb.getData(data + 2U);
+                }
 
 				if (m_duplex)
 					writeQueueRF(data);
@@ -2456,15 +2468,5 @@ void CDMRSlot::enable(bool enabled)
 }
 
 void CDMRSlot::setReverseChannel(unsigned int rc_command) {
-    switch(rc_command) {
-        case DMRCommand::RCCeaseTransmission:
-            m_reverseChannelCommand = 0x356A3A95;
-            break;
-        case DMRCommand::RCNoCommand:
-            m_reverseChannelCommand = 0;
-            break;
-        default:
-            m_reverseChannelCommand = 0;
-            break;
-    }
+    m_reverseChannelCommand = rc_command;
 }
