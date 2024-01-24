@@ -21,7 +21,6 @@
 #include "BPTC19696.h"
 #include "DMRSlot.h"
 #include "DMRCSBK.h"
-#include "DMREMB.h"
 #include "Utils.h"
 #include "Sync.h"
 #include "CRC.h"
@@ -70,7 +69,7 @@ const unsigned int NO_HEADERS_SIMPLEX = 8U;
 const unsigned int NO_HEADERS_DUPLEX  = 3U;
 const unsigned int NO_PREAMBLE_CSBK   = 15U;
 
-const unsigned int RC_CEASE_TRANSMIT[5] = {0x03, 0x56, 0xa3, 0xa9, 0x50};
+const unsigned int RC_CEASE_TRANSMIT[5] = {0x07, 0x0D, 0x04, 0xF1, 0xF0};
 
 // #define	DUMP_DMR
 
@@ -782,17 +781,7 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 					emb.setLCSS(lcss);
 					emb.getData(data + 2U);
 				}
-				if((m_rfN == 5U) && (m_reverseChannelCommand == DMRCommand::RCCeaseTransmission)) {
-                    data[14U] = (data[14U] & 0xF0U) | (RC_CEASE_TRANSMIT[0U] & 0x0FU);
-                    data[15U] = RC_CEASE_TRANSMIT[1U];
-                    data[16U] = RC_CEASE_TRANSMIT[2U];
-                    data[17U] = RC_CEASE_TRANSMIT[3U];
-                    data[18U] = (data[18U] & 0x0FU) | (RC_CEASE_TRANSMIT[4U] & 0xF0U);
-                    emb.setColorCode(m_colorCode);
-					emb.setLCSS(0);
-					emb.getData(data + 2U);
-                }
-
+                createReverseChannel(data, emb);
 				if (m_duplex)
 					writeQueueRF(data);
 
@@ -2467,6 +2456,22 @@ void CDMRSlot::enable(bool enabled)
 	m_enabled = enabled;
 }
 
-void CDMRSlot::setReverseChannel(unsigned int rc_command) {
+void CDMRSlot::setReverseChannelCommand(unsigned int rc_command) {
     m_reverseChannelCommand = rc_command;
+}
+
+void CDMRSlot::createReverseChannel(unsigned char *data, CDMREMB &emb) {
+    if(m_rfN == 5U) {
+        if (m_reverseChannelCommand == DMRCommand::RCCeaseTransmission) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_CEASE_TRANSMIT[0U] & 0x0FU);
+            data[17U] = RC_CEASE_TRANSMIT[1U];
+            data[18U] = RC_CEASE_TRANSMIT[2U];
+            data[19U] = RC_CEASE_TRANSMIT[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_CEASE_TRANSMIT[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+    }
 }

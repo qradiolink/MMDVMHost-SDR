@@ -127,9 +127,9 @@ void CDMRControl::clock()
                     case DMRCommand::RCCeaseTransmission:
                     {
                         if(command.slot == 1)
-                            m_slot1.setReverseChannel(command.commandType);
+                            m_slot1.setReverseChannelCommand(command.commandType);
                         else
-                            m_slot2.setReverseChannel(command.commandType);
+                            m_slot2.setReverseChannelCommand(command.commandType);
                     }
                     break;
                     default:

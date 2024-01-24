@@ -30,6 +30,7 @@
 #include "AMBEFEC.h"
 #include "DMRSlot.h"
 #include "DMRData.h"
+#include "DMREMB.h"
 #include "Display.h"
 #include "Defines.h"
 #include "Timer.h"
@@ -65,7 +66,7 @@ public:
 
 	static void init(unsigned int colorCode, bool embeddedLCOnly, bool dumpTAData, unsigned int callHang, CModem* modem, IDMRNetwork* network, CDisplay* display, bool duplex, CDMRLookup* lookup, CRSSIInterpolator* rssiMapper, unsigned int jitter, DMR_OVCM_TYPES ovcm);
 
-    void setReverseChannel(unsigned int rc_command);
+    void setReverseChannelCommand(unsigned int rc_command);
 
 private:
 	unsigned int               m_slotNo;
@@ -161,6 +162,7 @@ private:
 	void insertSilence(unsigned int count);
 
 	static void setShortLC(unsigned int slotNo, unsigned int id, FLCO flco = FLCO_GROUP, ACTIVITY_TYPE type = ACTIVITY_NONE);
+    void createReverseChannel(unsigned char *data, CDMREMB &emb);
 };
 
 #endif
