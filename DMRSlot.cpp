@@ -70,6 +70,11 @@ const unsigned int NO_HEADERS_DUPLEX  = 3U;
 const unsigned int NO_PREAMBLE_CSBK   = 15U;
 
 const unsigned int RC_CEASE_TRANSMIT[5] = {0x07, 0x0D, 0x04, 0xF1, 0xF0};
+const unsigned int RC_REQUEST_CEASE_TRANSMIT[5] = {0x02, 0x7b, 0x4e, 0x48, 0x70 };
+const unsigned int RC_MAX_POWER[5] = {0x01, 0xc3, 0xdd, 0x3c, 0x10 };
+const unsigned int RC_MIN_POWER[5] = {0x04, 0xb5, 0x97, 0x85, 0x90 };
+const unsigned int RC_POWER_INCREASE[5] = {0x04, 0x5b, 0xa7, 0x58, 0xa0 };
+const unsigned int RC_POWER_DECREASE[5] = {0x01, 0x2d, 0xed, 0xe1, 0x20 };
 
 // #define	DUMP_DMR
 
@@ -214,6 +219,7 @@ bool CDMRSlot::writeModem(unsigned char *data, unsigned int len)
 		if (dataType == DT_VOICE_LC_HEADER) {
 			if (m_rfState == RS_RF_AUDIO)
 				return true;
+            m_reverseChannelCommand = DMRCommand::RCNoCommand;
 
 			CDMRFullLC fullLC;
 			CDMRLC* lc = fullLC.decode(data + 2U, DT_VOICE_LC_HEADER);
@@ -2468,6 +2474,61 @@ void CDMRSlot::createReverseChannel(unsigned char *data, CDMREMB &emb) {
             data[18U] = RC_CEASE_TRANSMIT[2U];
             data[19U] = RC_CEASE_TRANSMIT[3U];
             data[20U] = (data[20U] & 0x0FU) | (RC_CEASE_TRANSMIT[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+        else if (m_reverseChannelCommand == DMRCommand::RCRequestCeaseTransmission) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_REQUEST_CEASE_TRANSMIT[0U] & 0x0FU);
+            data[17U] = RC_REQUEST_CEASE_TRANSMIT[1U];
+            data[18U] = RC_REQUEST_CEASE_TRANSMIT[2U];
+            data[19U] = RC_REQUEST_CEASE_TRANSMIT[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_REQUEST_CEASE_TRANSMIT[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+        else if (m_reverseChannelCommand == DMRCommand::RCMaximumPower) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_MAX_POWER[0U] & 0x0FU);
+            data[17U] = RC_MAX_POWER[1U];
+            data[18U] = RC_MAX_POWER[2U];
+            data[19U] = RC_MAX_POWER[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_MAX_POWER[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+        else if (m_reverseChannelCommand == DMRCommand::RCMinimumPower) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_MIN_POWER[0U] & 0x0FU);
+            data[17U] = RC_MIN_POWER[1U];
+            data[18U] = RC_MIN_POWER[2U];
+            data[19U] = RC_MIN_POWER[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_MIN_POWER[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+        else if (m_reverseChannelCommand == DMRCommand::RCPowerIncreaseOneStep) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_POWER_INCREASE[0U] & 0x0FU);
+            data[17U] = RC_POWER_INCREASE[1U];
+            data[18U] = RC_POWER_INCREASE[2U];
+            data[19U] = RC_POWER_INCREASE[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_POWER_INCREASE[4U] & 0xF0U);
+            emb.setColorCode(m_colorCode);
+            emb.setLCSS(0);
+            emb.setPI(true);
+            emb.getData(data + 2U);
+        }
+        else if (m_reverseChannelCommand == DMRCommand::RCPowerDecreaseOneStep) {
+            data[16U] = (data[16U] & 0xF0U) | (RC_POWER_DECREASE[0U] & 0x0FU);
+            data[17U] = RC_POWER_DECREASE[1U];
+            data[18U] = RC_POWER_DECREASE[2U];
+            data[19U] = RC_POWER_DECREASE[3U];
+            data[20U] = (data[20U] & 0x0FU) | (RC_POWER_DECREASE[4U] & 0xF0U);
             emb.setColorCode(m_colorCode);
             emb.setLCSS(0);
             emb.setPI(true);
