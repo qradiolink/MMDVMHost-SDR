@@ -124,7 +124,7 @@ void CDMRControl::clock()
                         }
                     }
                     break;
-                    case DMRCommand::RCCeaseTransmission:
+                    default:
                     {
                         if(command.slot == 1)
                             m_slot1.setReverseChannelCommand(command.commandType);
@@ -132,8 +132,6 @@ void CDMRControl::clock()
                             m_slot2.setReverseChannelCommand(command.commandType);
                     }
                     break;
-                    default:
-                        break;
                 }
             }
             else {
