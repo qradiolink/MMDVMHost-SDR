@@ -142,19 +142,13 @@ bool CDMRGatewayNetwork::read(CDMRData& data, TrunkingCommandParameters &command
         {
             case DMRCommand::ChannelEnableDisable:
             {
-                command.slot = (m_buffer[5U] & 0x80U) == 0x80U ? 2U : 1U;
                 command.channelEnable = (m_buffer[5U] & 0x01U) == 0x01U ? true : false;
-            }
-            break;
-            case DMRCommand::RCCeaseTransmission:
-            {
-                command.slot = (m_buffer[5U] & 0x80U) == 0x80U ? 2U : 1U;
-                command.ceaseTransmission = true;
             }
             break;
             default:
                 break;
         }
+        command.slot = (m_buffer[5U] & 0x80U) == 0x80U ? 2U : 1U;
         command.commandType = command_type;
         command.trunkingParams = true;
         return true;
